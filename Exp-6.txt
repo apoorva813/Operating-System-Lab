@@ -1,0 +1,131 @@
+Exp-6
+
+SJF-
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class SJFNonPreemptive {
+
+    // Function to calculate waiting time and turnaround time
+    public static void calculateTimes(int[][] processes) {
+        int n = processes.length;
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
+        int[] completionTime = new int[n];
+
+        // Sort by burst time (index 1)
+        Arrays.sort(processes, Comparator.comparingInt(o -> o[1]));
+
+        // Initialize variables
+        int currentTime = 0;
+        int totalWaitingTime = 0;
+        int totalTurnaroundTime = 0;
+
+        // Process execution in SJF manner
+        for (int i = 0; i < n; i++) {
+            currentTime += processes[i][1]; // Add burst time to current time
+            completionTime[i] = currentTime; // Store completion time
+            turnaroundTime[i] = completionTime[i] - processes[i][0]; // Turnaround time
+            waitingTime[i] = turnaroundTime[i] - processes[i][1]; // Waiting time
+
+            totalWaitingTime += waitingTime[i];
+            totalTurnaroundTime += turnaroundTime[i];
+        }
+
+        double avgWaitingTime = (double) totalWaitingTime / n;
+        double avgTurnaroundTime = (double) totalTurnaroundTime / n;
+
+        System.out.println("Process\tWaiting Time\tTurnaround Time");
+        for (int i = 0; i < n; i++) {
+            System.out.println("P" + (i + 1) + "\t\t" + waitingTime[i] + "\t\t" + turnaroundTime[i]);
+        }
+        System.out.println("Average Waiting Time: " + avgWaitingTime);
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
+    }
+
+    public static void main(String[] args) {
+        // Example input: processes with (arrival_time, burst_time)
+        int[][] processes = {{0, 6}, {1, 8}, {2, 7}, {3, 3}}; 
+
+        // Call the scheduling function
+        calculateTimes(processes);
+    }
+}
+
+SRTF
+
+public class SRTFPreemptive {
+
+    // Function to find the waiting time and turnaround time for each process
+    public static void findTimes(int[][] processes) {
+        int n = processes.length;
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
+        int[] remainingTime = new int[n];
+
+        // Store burst time in remainingTime[]
+        for (int i = 0; i < n; i++) {
+            remainingTime[i] = processes[i][1];
+        }
+
+        int complete = 0, time = 0, shortest = 0, minTime = Integer.MAX_VALUE;
+        boolean check = false;
+        int finishTime;
+        int totalWaitingTime = 0;
+        int totalTurnaroundTime = 0;
+
+        while (complete != n) {
+            for (int j = 0; j < n; j++) {
+                if ((processes[j][0] <= time) && (remainingTime[j] < minTime) && remainingTime[j] > 0) {
+                    minTime = remainingTime[j];
+                    shortest = j;
+                    check = true;
+                }
+            }
+
+            if (!check) {
+                time++;
+                continue;
+            }
+
+            remainingTime[shortest]--;
+            minTime = remainingTime[shortest];
+
+            if (minTime == 0) {
+                minTime = Integer.MAX_VALUE;
+            }
+
+            if (remainingTime[shortest] == 0) {
+                complete++;
+                finishTime = time + 1;
+
+                turnaroundTime[shortest] = finishTime - processes[shortest][0];
+                waitingTime[shortest] = turnaroundTime[shortest] - processes[shortest][1];
+
+                totalWaitingTime += waitingTime[shortest];
+                totalTurnaroundTime += turnaroundTime[shortest];
+            }
+
+            time++;
+        }
+
+        double avgWaitingTime = (double) totalWaitingTime / n;
+        double avgTurnaroundTime = (double) totalTurnaroundTime / n;
+
+        System.out.println("Process\tWaiting Time\tTurnaround Time");
+        for (int i = 0; i < n; i++) {
+            System.out.println("P" + (i + 1) + "\t\t" + waitingTime[i] + "\t\t" + turnaroundTime[i]);
+        }
+        System.out.println("Average Waiting Time: " + avgWaitingTime);
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
+    }
+
+    public static void main(String[] args) {
+        // Example input: processes with (arrival_time, burst_time)
+        int[][] processes = {{0, 6}, {1, 8}, {2, 7}, {3, 3}};
+
+        // Call the scheduling function
+        findTimes(processes);
+    }
+}
+
