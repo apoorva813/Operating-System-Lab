@@ -1,0 +1,144 @@
+EXP 2
+
+b)# Function to calculate factorial
+factorial() {
+    if [ "$1" -le "1" ]; then
+        echo 1
+    else
+        prev=$(factorial $(($1 - 1)))
+        echo $(($1 * $prev))
+    fi
+}
+
+# Read the input number
+echo -n "Enter a number: "
+read number
+
+# Validate the input
+if ! [[ "$number" =~ ^[0-9]+$ ]]; then
+    echo "Invalid input. Please enter a non-negative integer."
+    exit 1
+fi
+
+# Calculate the factorial
+result=$(factorial $number)
+
+# Output the result
+echo "The factorial of $number is: $result"
+
+c)#!/bin/bash
+
+# Function to calculate gross salary
+calculate_gross_salary() {
+    basic_salary=$1
+
+    # Calculate HRA (20% of basic salary)
+    hra=$(echo "scale=2; $basic_salary * 0.20" | bc)
+
+    # Calculate DA (10% of basic salary)
+    da=$(echo "scale=2; $basic_salary * 0.10" | bc)
+
+    # Calculate Gross Salary
+    gross_salary=$(echo "scale=2; $basic_salary + $hra + $da" | bc)
+
+    echo "Gross Salary: $gross_salary"
+}
+
+# Read the basic salary from the user
+echo -n "Enter the basic salary: "
+read basic_salary
+
+# Validate the input
+if ! [[ "$basic_salary" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    echo "Invalid input. Please enter a valid numeric value for the basic salary."
+    exit 1
+fi
+
+# Calculate and display the gross salary
+calculate_gross_salary $basic_salary
+
+d) #!/bin/bash
+
+while true
+do
+    # Display menu options
+    echo "Menu:"
+    echo "1. List files in the current directory"
+    echo "2. Show current date and time"
+    echo "3. Display users currently logged in"
+    echo "4. Show process status"
+    echo "5. Check if a number is prime"
+    echo "6. Check if a number is palindrome"
+    echo "7. Quit"
+    echo "Enter your choice:"
+    
+    # Read user input
+    read choice
+    
+    # Execute instructions based on the choice
+    case $choice in
+        1)
+            echo "Listing files in the current directory:"
+            ls
+            ;;
+        2)
+            echo "Current date and time:"
+            date
+            ;;
+        3)
+            echo "Users currently logged in:"
+            who
+            ;;
+        4)
+            echo "Process status:"
+            ps
+            ;;
+        5)
+            echo "Enter a number to check if it is prime:"
+            read num
+            if [ "$num" -le 1 ]; then
+                echo "$num is not a prime number."
+            else
+                is_prime=1
+                for (( i=2; i*i<=num; i++ ))
+                do
+                    if [ $((num % i)) -eq 0 ]; then
+                        is_prime=0
+                        break
+                    fi
+                done
+                if [ $is_prime -eq 1 ]; then
+                    echo "$num is a prime number."
+                else
+                    echo "$num is not a prime number."
+                fi
+            fi
+            ;;
+        6)
+            echo "Enter a number to check if it is palindrome:"
+            read num
+            original_num=$num
+            reverse_num=0
+            while [ $num -gt 0 ]
+            do
+                remainder=$((num % 10))
+                reverse_num=$((reverse_num * 10 + remainder))
+                num=$((num / 10))
+            done
+            if [ $original_num -eq $reverse_num ]; then
+                echo "$original_num is a palindrome."
+            else
+                echo "$original_num is not a palindrome."
+            fi
+            ;;
+        7)
+            echo "Exiting the program. Goodbye!"
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice, please try again."
+            ;;
+    esac
+    echo "" # Adding a blank line for readability
+done
+
