@@ -1,0 +1,126 @@
+Exp-5
+
+1) FCFS with arrival time-
+
+#include <iostream>
+using namespace std;
+
+// Function to calculate waiting time
+void calculateWaitingTime(int processes[], int n, int arrivalTime[], int burstTime[], int waitingTime[]) {
+    int serviceTime[n];  // Service time stores the time when each process starts executing
+    serviceTime[0] = arrivalTime[0];  // The first process starts at its arrival time
+    waitingTime[0] = 0;  // First process has no waiting time
+
+    for (int i = 1; i < n; i++) {
+        serviceTime[i] = serviceTime[i - 1] + burstTime[i - 1];  // Service time for current process = service time of previous process + its burst time
+        waitingTime[i] = serviceTime[i] - arrivalTime[i];  // Waiting time = service time - arrival time
+
+        if (waitingTime[i] < 0) {  // If the waiting time is negative (process arrives after previous finishes), set it to 0
+            waitingTime[i] = 0;
+        }
+    }
+}
+
+// Function to calculate turnaround time
+void calculateTurnAroundTime(int processes[], int n, int burstTime[], int waitingTime[], int turnAroundTime[]) {
+    for (int i = 0; i < n; i++) {
+        turnAroundTime[i] = burstTime[i] + waitingTime[i];  // Turnaround time = burst time + waiting time
+    }
+}
+
+// Function to calculate average time and print results
+void fcfsWithArrival(int processes[], int n, int arrivalTime[], int burstTime[]) {
+    int waitingTime[n], turnAroundTime[n];  // Arrays to store waiting times and turnaround times
+
+    // Calculate waiting time for all processes
+    calculateWaitingTime(processes, n, arrivalTime, burstTime, waitingTime);
+
+    // Calculate turnaround time for all processes
+    calculateTurnAroundTime(processes, n, burstTime, waitingTime, turnAroundTime);
+
+    cout << "Processes  Arrival Time  Burst Time  Waiting Time  Turnaround Time\n";
+
+    int totalWaitingTime = 0, totalTurnAroundTime = 0;  // Variables to store total waiting and turnaround times
+    for (int i = 0; i < n; i++) {
+        totalWaitingTime += waitingTime[i];  // Summing up waiting times
+        totalTurnAroundTime += turnAroundTime[i];  // Summing up turnaround times
+        // Printing process details
+        cout << "   " << processes[i] << "\t\t" << arrivalTime[i] << "\t\t" << burstTime[i]
+             << "\t\t" << waitingTime[i] << "\t\t" << turnAroundTime[i] << endl;
+    }
+
+    // Print average waiting and turnaround times
+    cout << "\nAverage waiting time = " << (float)totalWaitingTime / n;
+    cout << "\nAverage turnaround time = " << (float)totalTurnAroundTime / n << endl;
+}
+
+int main() {
+    // Process IDs
+    int processes[] = {1, 2, 3, 4};  
+    int n = sizeof(processes) / sizeof(processes[0]);  // Number of processes
+
+    // Arrival times of each process
+    int arrivalTime[] = {0, 1, 2, 3};  
+
+    // Burst times (execution times) of each process
+    int burstTime[] = {8, 4, 9, 5};    
+
+    // Call the FCFS function
+    fcfsWithArrival(processes, n, arrivalTime, burstTime);
+    return 0;
+}
+
+2) FCFS without arrival time-
+#include <iostream>
+using namespace std;
+
+// Function to calculate waiting time
+void calculateWaitingTimeWithoutArrival(int processes[], int n, int burstTime[], int waitingTime[]) {
+    waitingTime[0] = 0;  // First process has no waiting time
+
+    for (int i = 1; i < n; i++) {
+        waitingTime[i] = burstTime[i - 1] + waitingTime[i - 1];  // Waiting time for current process = previous process's burst time + previous waiting time
+    }
+}
+
+// Function to calculate turnaround time
+void calculateTurnAroundTimeWithoutArrival(int processes[], int n, int burstTime[], int waitingTime[], int turnAroundTime[]) {
+    for (int i = 0; i < n; i++) {
+        turnAroundTime[i] = burstTime[i] + waitingTime[i];  // Turnaround time = burst time + waiting time
+    }
+}
+
+// Function to calculate average time and print results
+void fcfsWithoutArrival(int processes[], int n, int burstTime[]) {
+    int waitingTime[n], turnAroundTime[n];  // Arrays to store waiting times and turnaround times
+
+    calculateWaitingTimeWithoutArrival(processes, n, burstTime, waitingTime);  // Calculate waiting time
+    calculateTurnAroundTimeWithoutArrival(processes, n, burstTime, waitingTime, turnAroundTime);  // Calculate turnaround time
+
+    cout << "Processes  Burst Time  Waiting Time  Turnaround Time\n";
+
+    int totalWaitingTime = 0, totalTurnAroundTime = 0;  // Variables to store total waiting and turnaround times
+    for (int i = 0; i < n; i++) {
+        totalWaitingTime += waitingTime[i];  // Summing up waiting times
+        totalTurnAroundTime += turnAroundTime[i];  // Summing up turnaround times
+        cout << "   " << processes[i] << "\t\t" << burstTime[i] << "\t\t" << waitingTime[i]
+             << "\t\t" << turnAroundTime[i] << endl;
+    }
+
+    // Print average waiting and turnaround times
+    cout << "\nAverage waiting time = " << (float)totalWaitingTime / n;
+    cout << "\nAverage turnaround time = " << (float)totalTurnAroundTime / n << endl;
+}
+
+int main() {
+    // Process IDs
+    int processes[] = {1, 2, 3, 4};  
+    int n = sizeof(processes) / sizeof(processes[0]);  // Number of processes
+
+    // Burst times (execution times) of each process
+    int burstTime[] = {8, 4, 9, 5};    
+
+    // Call the FCFS function
+    fcfsWithoutArrival(processes, n, burstTime);
+    return 0;
+}
