@@ -1,0 +1,24 @@
+Exp-1
+
+- rm filename to remove a single file
+- rm -r directoryname to remove a directory and its contents
+- rm * to remove all files in the current directory (use with caution!)
+Note: The -r option stands for "recursive" and is used to remove directories and their contents.
+
+grep "word" filename
+This will search for the word "word" in the file "filename" and print the lines containing the word.
+You can also use options like:
+- -i for case-insensitive search
+- -n to print line numbers
+- -r to search recursively in directories
+
+
+- * (asterisk): matches any characters, including none
+- ? (question mark): matches a single character
+- [ ] (square brackets): matches any character within the brackets
+- { } (curly brackets): matches any pattern within the brackets, separated by commas
+Examples:
+- ls *.txt lists all files ending with .txt
+- ls ?letter.txt lists files with a single character followed by letter.txt
+- ls [abc]*.txt lists files starting with a, b, or c and ending with .txt
+- ls {file1,file2,file3}.txt lists files file1.txt, file2.txt, and file3.txt
