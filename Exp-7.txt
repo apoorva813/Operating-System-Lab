@@ -1,0 +1,72 @@
+Exp-7
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+class Process {
+    int pid;
+    int arrivalTime;
+    int burstTime;
+    int priority;
+    int startTime;
+    int completionTime;
+    int waitingTime;
+    int turnaroundTime;
+
+    public Process(int pid, int arrivalTime, int burstTime, int priority) {
+        this.pid = pid;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = priority;
+    }
+}
+
+public class PriorityScheduling {
+
+    public static void priorityScheduling(List<Process> processes) {
+        // Sort processes by priority, then by arrival time
+        Collections.sort(processes, new Comparator<Process>() {
+            public int compare(Process p1, Process p2) {
+                if (p1.priority == p2.priority) {
+                    return Integer.compare(p1.arrivalTime, p2.arrivalTime);
+                }
+                return Integer.compare(p1.priority, p2.priority);
+            }
+        });
+
+        int currentTime = 0;
+
+        for (Process process : processes) {
+            if (currentTime < process.arrivalTime) {
+                currentTime = process.arrivalTime; // If CPU is idle, wait for the process arrival
+            }
+            process.startTime = currentTime;
+            process.completionTime = process.startTime + process.burstTime;
+            process.turnaroundTime = process.completionTime - process.arrivalTime;
+            process.waitingTime = process.turnaroundTime - process.burstTime;
+            currentTime += process.burstTime;
+        }
+
+        // Display process information
+        System.out.println("PID\tArrival Time\tBurst Time\tPriority\tStart Time\tCompletion Time\tWaiting Time\tTurnaround Time");
+        for (Process process : processes) {
+            System.out.println(process.pid + "\t" + process.arrivalTime + "\t\t" + process.burstTime + "\t\t" +
+                               process.priority + "\t\t" + process.startTime + "\t\t" + process.completionTime +
+                               "\t\t" + process.waitingTime + "\t\t" + process.turnaroundTime);
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Process> processList = new ArrayList<>();
+        
+        // Example process data
+        processList.add(new Process(1, 0, 10, 2));
+        processList.add(new Process(2, 1, 5, 1));
+        processList.add(new Process(3, 2, 8, 3));
+        processList.add(new Process(4, 3, 6, 2));
+        
+        priorityScheduling(processList);
+    }
+}
