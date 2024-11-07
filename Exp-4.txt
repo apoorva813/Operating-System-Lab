@@ -1,0 +1,88 @@
+Exp-4
+
+a)
+#!/bin/bash
+
+echo "Enter a number:"
+read num
+
+if [$((num%2)) -eq 0]
+then
+echo "$num is even"
+else
+echo "$num is odd"
+fi
+
+b)
+#!/bin/bash
+
+echo "Enter a number:"
+read num
+
+# Check if number is less than or equal to 1
+if [ $num -le 1 ]; then
+    echo "$num is not a prime number."
+    exit 0
+fi
+
+# Assume the number is prime
+is_prime=1
+
+# Check for factors from 2 to sqrt(num)
+for (( i=2; i*i<=num; i++ ))
+do
+    if [ $((num % i)) -eq 0 ]; then
+        is_prime=0
+        break
+    fi
+done
+
+# Output result
+if [ $is_prime -eq 1 ]; then
+    echo "$num is a prime number."
+else
+    echo "$num is not a prime number."
+fi
+
+c)
+#!/bin/bash
+
+echo "Enter a number:"
+read num
+
+# Store the original number
+original_num=$num
+
+# Reverse the number
+reverse_num=0
+while [ $num -gt 0 ]
+do
+    remainder=$((num % 10))
+    reverse_num=$((reverse_num * 10 + remainder))
+    num=$((num / 10))
+done
+
+# Check if the original number and reversed number are the same
+if [ $original_num -eq $reverse_num ]; then
+    echo "$original_num is a palindrome."
+else
+    echo "$original_num is not a palindrome."
+fi
+
+d)
+#!/bin/bash
+
+echo "Enter a number between 1 and 7:"
+read num
+
+# Check the number and print the corresponding day of the week
+case $num in
+    1) echo "Sunday" ;;
+    2) echo "Monday" ;;
+    3) echo "Tuesday" ;;
+    4) echo "Wednesday" ;;
+    5) echo "Thursday" ;;
+    6) echo "Friday" ;;
+    7) echo "Saturday" ;;
+    *) echo "Invalid number. Please enter a number between 1 and 7." ;;
+esac
