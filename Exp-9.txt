@@ -1,0 +1,93 @@
+import java.util.concurrent.Semaphore;
+
+public class ReaderWriter {
+    private static int readCount = 0;                      // Number of active readers
+    private static final Semaphore resourceAccess = new Semaphore(1);     // Controls access to the shared resource
+    private static final Semaphore readCountAccess = new Semaphore(1);    // Controls access to readCount
+
+    // Reader class
+    static class Reader extends Thread {
+        private final int readerId;
+
+        public Reader(int id) {
+            this.readerId = id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    // Entry section
+                    readCountAccess.acquire();               // Lock readCount
+                    readCount++;
+                    if (readCount == 1) {
+                        resourceAccess.acquire();            // First reader locks the resource
+                    }
+                    readCountAccess.release();               // Unlock readCount
+
+                    // Critical section (Reading)
+                    System.out.println("Reader " + readerId + " is reading the resource.");
+                    Thread.sleep(1000);                      // Simulate reading time
+
+                    // Exit section
+                    readCountAccess.acquire();               // Lock readCount
+                    readCount--;
+                    if (readCount == 0) {
+                        resourceAccess.release();            // Last reader unlocks the resource
+                    }
+                    readCountAccess.release();               // Unlock readCount
+
+                    // Time between consecutive reads
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Reader " + readerId + " interrupted.");
+            }
+        }
+    }
+
+    // Writer class
+    static class Writer extends Thread {
+        private final int writerId;
+
+        public Writer(int id) {
+            this.writerId = id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    // Entry section
+                    resourceAccess.acquire();               // Writer locks the resource
+
+                    // Critical section (Writing)
+                    System.out.println("Writer " + writerId + " is writing to the resource.");
+                    Thread.sleep(2000);                     // Simulate writing time
+
+                    // Exit section
+                    resourceAccess.release();               // Writer unlocks the resource
+
+                    // Time between consecutive writes
+                    Thread.sleep(2000);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Writer " + writerId + " interrupted.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        // Create and start reader and writer threads
+        int numReaders = 3;
+        int numWriters = 2;
+
+        for (int i = 1; i <= numReaders; i++) {
+            new Reader(i).start();
+        }
+
+        for (int i = 1; i <= numWriters; i++) {
+            new Writer(i).start();
+        }
+    }
+}
